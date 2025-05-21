@@ -22,6 +22,19 @@ func _ready() -> void:
 func _process(delta):
 	get_input()
 
+func _physics_process(delta: float) -> void:
+	constant_force = thrust
+	constant_torque = rotation_dir * spin_power
+
+func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+	var xform = physics_state.transform
+	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
+	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
+	physics_state.transform = xform
+	
+func _on_gun_cooldown_timeout() -> void:
+	can_shoot = true
+	
 func get_input():
 	thrust = Vector2.ZERO
 	
@@ -43,16 +56,6 @@ func shoot():
 	var b = bullet_scene.instantiate()
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
-	
-func _physics_process(delta: float) -> void:
-	constant_force = thrust
-	constant_torque = rotation_dir * spin_power
-
-func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
-	var xform = physics_state.transform
-	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
-	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
-	physics_state.transform = xform
 	
 func change_state(new_state):
 	match new_state:

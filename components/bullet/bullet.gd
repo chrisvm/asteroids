@@ -6,6 +6,7 @@ var velocity = Vector2.ZERO
 
 func start(_transform):
 	transform = _transform
+	velocity = transform.x * speed
 	
 func _process(delta: float) -> void:
 	position += velocity * delta
