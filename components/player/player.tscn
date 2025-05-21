@@ -4,13 +4,13 @@
 [ext_resource type="Texture2D" uid="uid://bny4k2uwggxrh" path="res://assets/player_small.png" id="1_t3162"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t3162"]
+radius = 19.0263
 
 [node name="Player" type="RigidBody2D"]
 script = ExtResource("1_kfe3d")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
-scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_t3162")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -8,9 +8,11 @@ var state = INIT
 
 var thrust = Vector2.ZERO
 var rotation_dir = 0
+var screensize = Vector2.ZERO
  
 func _ready() -> void:
 	change_state(ALIVE)
+	screensize = get_viewport_rect().size
 	
 func _process(delta):
 	get_input()
@@ -27,6 +29,12 @@ func _physics_process(delta: float) -> void:
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
 
+func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+	var xform = physics_state.transform
+	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
+	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
+	physics_state.transform = xform
+	
 func change_state(new_state):
 	match new_state:
 		INIT:
