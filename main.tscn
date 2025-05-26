@@ -21,5 +21,8 @@ texture = ExtResource("1_0xm2m")
 
 [node name="Player" parent="." instance=ExtResource("1_ig7tw")]
 
-[node name="Path2D" type="Path2D" parent="."]
+[node name="RockPath" type="Path2D" parent="."]
 curve = SubResource("Curve2D_0xm2m")
+
+[node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
+position = Vector2(16, 0)

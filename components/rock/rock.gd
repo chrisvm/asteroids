@@ -16,7 +16,7 @@ func start(_position, _velocity, _size):
 	radius = int($Sprite2D.texture.get_size().x / 2 * $Sprite2D.scale.x)
 	var shape = CircleShape2D.new()
 	shape.radius = radius
-	$CollisionShape2d.shape = shape
+	$CollisionShape2D.shape = shape
 
 	linear_velocity = _velocity
 	angular_velocity = randf_range(-PI, PI)

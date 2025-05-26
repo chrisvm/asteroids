@@ -10,4 +10,11 @@ func _ready():
 
 func spawn_rock(size, pos=null, vel=null):
 	if pos == null:
-		pass
+		$RockPath/RockSpawn.progress = randi()
+		pos = $RockPath/RockSpawn.position
+	if vel == null:
+		vel = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(50, 120)
+	var r = rock_scene.instantiate()
+	r.screensize = screensize
+	r.start(pos, vel, size)
+	call_deferred("add_child", r)
