@@ -17,6 +17,7 @@ var screensize = Vector2.ZERO
 func _ready() -> void:
 	change_state(ALIVE)
 	$GunCooldown.wait_time = fire_rate
+	$GunCooldown.timeout.connect(_on_gun_cooldown_timeout)
 	screensize = get_viewport_rect().size
 	
 func _process(delta):
@@ -43,7 +44,7 @@ func get_input():
 		
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
-	if Input.is_action_pressed("shoot"):
+	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 		
 	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
