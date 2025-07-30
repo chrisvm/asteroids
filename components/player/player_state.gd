@@ -14,6 +14,26 @@ var thrust = Vector2.ZERO
 var rotation_dir = 0
 var screensize = Vector2.ZERO
  
+signal lives_changed
+signal dead
+
+var reset_pos = false
+var lives = 0: set = set_lives
+
+func set_lives(value):
+	lives = value
+	lives_changed.emit(lives)
+	if lives <= 0:
+		change_state(DEAD)
+	else:
+		change_state(INVULNERABLE)
+
+func reset():
+	reset_pos = true
+	$Sprite2D.show()
+	lives = 3
+	change_state(ALIVE)
+
 func _ready() -> void:
 	change_state(ALIVE)
 	$GunCooldown.wait_time = fire_rate
@@ -28,6 +48,10 @@ func _physics_process(delta: float) -> void:
 	constant_torque = rotation_dir * spin_power
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+	if reset_pos:
+		physics_state.transform.origin = screensize / 2
+		reset_pos = false
+		
 	var xform = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
 	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
