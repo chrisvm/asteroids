@@ -73,6 +73,7 @@ theme_override_constants/separation = 100
 [node name="Message" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_uovps")
+horizontal_alignment = 1
 
 [node name="StartButton" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2

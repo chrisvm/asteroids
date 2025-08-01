@@ -20,20 +20,6 @@ signal dead
 var reset_pos = false
 var lives = 0: set = set_lives
 
-func set_lives(value):
-	lives = value
-	lives_changed.emit(lives)
-	if lives <= 0:
-		change_state(DEAD)
-	else:
-		change_state(INVULNERABLE)
-
-func reset():
-	reset_pos = true
-	$Sprite2D.show()
-	lives = 3
-	change_state(ALIVE)
-
 func _ready() -> void:
 	change_state(ALIVE)
 	$GunCooldown.wait_time = fire_rate
@@ -59,18 +45,31 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
 	
 func _on_gun_cooldown_timeout() -> void:
 	can_shoot = true
+
+func set_lives(value):
+	lives = value
+	lives_changed.emit(lives)
+	if lives <= 0:
+		change_state(DEAD)
+	else:
+		change_state(INVULNERABLE)
+
+func reset():
+	reset_pos = true
+	$Sprite2D.show()
+	lives = 3
+	change_state(ALIVE)
 	
 func get_input():
-	thrust = Vector2.ZERO
-	
 	if state in [DEAD, INIT]:
 		return
-		
+	
+	thrust = Vector2.ZERO
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
-		
+	
 	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 
 func shoot():
