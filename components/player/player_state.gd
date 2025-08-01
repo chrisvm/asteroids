@@ -11,6 +11,7 @@ var state = INIT
 @export var pid_kp: float = 10.0
 @export var pid_kd: float = 5.0
 var angle_error = 0
+var error_derivative = 0
 var last_angle_error: float = 0.0
 
 var can_shoot = true
@@ -35,9 +36,6 @@ func _ready() -> void:
 	
 func _process(delta):
 	get_input()
-
-func _physics_process(delta: float) -> void:
-	constant_force = thrust
 	
 func _on_gun_cooldown_timeout() -> void:
 	can_shoot = true
@@ -69,17 +67,16 @@ func get_input():
 	# handle mouse inmput
 	var to_mouse = get_global_mouse_position() - global_position
 	var target_angle = to_mouse.angle()
-	var angle_error = wrapf(target_angle - rotation, -PI, PI)
+	angle_error = wrapf(target_angle - rotation, -PI, PI)
+
+func _physics_process(delta: float) -> void:
+	constant_force = thrust
+	error_derivative = (angle_error - last_angle_error) / delta
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
 	if reset_pos:
 		physics_state.transform.origin = screensize / 2
 		reset_pos = false
-	
-	
-
-	var angular_velocity = physics_state.angular_velocity
-	var error_derivative = (angle_error - last_angle_error) / get_physics_process_delta_time()
 
 	var torque = angle_error * pid_kp - error_derivative * pid_kd
 	physics_state.apply_torque(torque)
