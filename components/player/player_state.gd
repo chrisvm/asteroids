@@ -4,11 +4,18 @@ enum {INIT, ALIVE, INVULNERABLE, DEAD}
 var state = INIT
 
 @export var bullet_scene: PackedScene
-@export var fire_rate = 0.25	
+@export var fire_rate = 0.25
+@export var turn_strength = 1.5
+
+# vars concerning the pid algo
+@export var pid_kp: float = 10.0
+@export var pid_kd: float = 5.0
+var angle_error = 0
+var last_angle_error: float = 0.0
+
 var can_shoot = true
 
 @export var engine_power = 500
-@export var spin_power = 8000
 
 var thrust = Vector2.ZERO
 var rotation_dir = 0
@@ -31,17 +38,6 @@ func _process(delta):
 
 func _physics_process(delta: float) -> void:
 	constant_force = thrust
-	constant_torque = rotation_dir * spin_power
-
-func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
-	if reset_pos:
-		physics_state.transform.origin = screensize / 2
-		reset_pos = false
-		
-	var xform = physics_state.transform
-	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
-	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
-	physics_state.transform = xform
 	
 func _on_gun_cooldown_timeout() -> void:
 	can_shoot = true
@@ -70,12 +66,36 @@ func get_input():
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 	
-	rotation_dir = Input.get_axis("rotate_left", "rotate_right")
+	# handle mouse inmput
+	var to_mouse = get_global_mouse_position() - global_position
+	var target_angle = to_mouse.angle()
+	var angle_error = wrapf(target_angle - rotation, -PI, PI)
 
+func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+	if reset_pos:
+		physics_state.transform.origin = screensize / 2
+		reset_pos = false
+	
+	
+
+	var angular_velocity = physics_state.angular_velocity
+	var error_derivative = (angle_error - last_angle_error) / get_physics_process_delta_time()
+
+	var torque = angle_error * pid_kp - error_derivative * pid_kd
+	physics_state.apply_torque(torque)
+
+	last_angle_error = angle_error
+	
+	# wrap the player around the screen
+	var xform = physics_state.transform
+	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
+	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
+	physics_state.transform = xform
+	
 func shoot():
 	if state == INVULNERABLE:
 		return
-	can_shoot = false
+	can_shoot = false   
 	$GunCooldown.start()
 	var b = bullet_scene.instantiate()
 	get_tree().root.add_child(b)

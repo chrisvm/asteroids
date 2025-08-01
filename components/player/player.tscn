@@ -11,6 +11,8 @@ radius = 19.0263
 script = ExtResource("1_kfe3d")
 bullet_scene = ExtResource("2_ph1f6")
 fire_rate = 0.75
+pid_kp = 3500.0
+pid_kd = 150.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708

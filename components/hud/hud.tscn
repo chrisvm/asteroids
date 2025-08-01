@@ -11,6 +11,7 @@ font = ExtResource("1_p67qi")
 font_size = 64
 
 [sub_resource type="LabelSettings" id="LabelSettings_uovps"]
+font = ExtResource("1_p67qi")
 
 [node name="CanvasLayer" type="CanvasLayer"]
 script = ExtResource("1_guyy7")
