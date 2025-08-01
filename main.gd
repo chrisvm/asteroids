@@ -38,8 +38,8 @@ func new_level():
 	
 func spawn_rock(size, pos=null, vel=null):
 	if pos == null:
-		$RockPath/RockSpawn.progress = randi()
-		pos = $RockPath/RockSpawn.position
+		$RockPath/RockSpawnPathFollower.progress = randi()
+		pos = $RockPath/RockSpawnPathFollower.position
 	if vel == null:
 		vel = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(50, 120)
 	var r = rock_scene.instantiate()
